@@ -86,10 +86,7 @@ export function RetentionChart({ data, className, showThreshold = true }: Retent
                     )}
 
                     {showThreshold && (
-                        <ReferenceLine y={80} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Mastery Zone", fill: "#10b981", fontSize: 12, position: "insideTopLeft" }} />
-                    )}
-                    {showThreshold && (
-                        <ReferenceLine y={40} stroke="#ef4444" strokeDasharray="3 3" label={{ value: "Danger Zone", fill: "#ef4444", fontSize: 12, position: "insideBottomLeft" }} />
+                        <ReferenceLine y={85} stroke="#ef4444" strokeDasharray="3 3" label={{ value: "Target Retention (85%)", fill: "#ef4444", fontSize: 12, position: "insideBottomRight" }} />
                     )}
                 </AreaChart>
             </ResponsiveContainer>
