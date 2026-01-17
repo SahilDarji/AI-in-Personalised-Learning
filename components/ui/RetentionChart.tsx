@@ -15,9 +15,10 @@ interface RetentionChartProps {
     data: RetentionDataPoint[];
     className?: string;
     showThreshold?: boolean;
+    targetRetention?: number;
 }
 
-export function RetentionChart({ data, className, showThreshold = true }: RetentionChartProps) {
+export function RetentionChart({ data, className, showThreshold = true, targetRetention = 85 }: RetentionChartProps) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -86,7 +87,7 @@ export function RetentionChart({ data, className, showThreshold = true }: Retent
                     )}
 
                     {showThreshold && (
-                        <ReferenceLine y={85} stroke="#ef4444" strokeDasharray="3 3" label={{ value: "Target Retention (85%)", fill: "#ef4444", fontSize: 12, position: "insideBottomRight" }} />
+                        <ReferenceLine y={targetRetention} stroke="#ef4444" strokeDasharray="3 3" label={{ value: `Target Retention (${targetRetention}%)`, fill: "#ef4444", fontSize: 12, position: "insideBottomRight" }} />
                     )}
                 </AreaChart>
             </ResponsiveContainer>
