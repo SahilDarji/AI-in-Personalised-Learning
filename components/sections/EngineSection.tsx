@@ -20,10 +20,11 @@ export function EngineSection() {
 
     // 3. Optimization State (The Schedule)
     const [optimalDay, setOptimalDay] = useState(0);
+    const [targetRetention, setTargetRetention] = useState(85); // NEW: User adjustable target
 
     // --- LOGIC ---
 
-    // Update Prediction & Schedule whenever Mastery changes
+    // Update Prediction & Schedule whenever Mastery OR Target changes
     useEffect(() => {
         // Decay = BaseDecay * (1 - Mastery * 0.8)
         const newDecay = 0.25 * (1 - mastery * 0.9) + 0.02;
@@ -38,8 +39,8 @@ export function EngineSection() {
             const retention = (mastery * Math.exp(-newDecay * t)) * 100;
             curve.push({ day: t, retention });
 
-            // Find optimal review day (closest to 85%)
-            if (!hitTarget && retention < 85) {
+            // Find optimal review day (closest to target)
+            if (!hitTarget && retention < targetRetention) {
                 foundDay = t;
                 hitTarget = true;
             }
@@ -47,7 +48,7 @@ export function EngineSection() {
         setPredictionData(curve);
         setOptimalDay(foundDay === -1 ? 1 : foundDay); // Default to 1 if immediate
 
-    }, [mastery]);
+    }, [mastery, targetRetention]);
 
     const handleUpdateMastery = (correct: boolean) => {
         setMastery(prev => {
@@ -118,6 +119,26 @@ export function EngineSection() {
                                     className="bg-slate-50 border-none"
                                 />
                             </div>
+
+                            {/* BAYESIAN INTUITION DEEP DIVE */}
+                            <div className="bg-violet-50 p-6 rounded-2xl border border-violet-100">
+                                <h4 className="font-bold text-violet-800 mb-3 flex items-center gap-2">
+                                    <Brain className="w-4 h-4" /> Intuition: Why does it work?
+                                </h4>
+                                <div className="space-y-3 text-sm text-violet-900/80 leading-relaxed">
+                                    <p>
+                                        The formula might look scary, but the logic is simple. It balances <strong>Prior Belief</strong> (what we thought before) with <strong>New Evidence</strong> (your answer).
+                                    </p>
+                                    <ul className="list-disc pl-5 space-y-2">
+                                        <li>
+                                            <strong>If you answer Correctly:</strong> We ask, "Could they have guessed?" (P(Guess)). Since guessing is rare (e.g., 25%), a correct answer is strong evidence you actually know it. Mastery jumps up!
+                                        </li>
+                                        <li>
+                                            <strong>If you answer Incorrectly:</strong> We ask, "Did they slip?" (P(Slip)). Even experts make mistakes, so we lower Mastery, but we don't drop it to zero immediately.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
 
                         {/* STAGE 2: PREDICTION */}
@@ -132,7 +153,13 @@ export function EngineSection() {
                             </p>
 
                             <div className="p-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                                <RetentionChart data={predictionData} className="h-[300px] w-full" showThreshold={true} />
+                                {/* Pass the dynamic target retention to the chart visualization */}
+                                <RetentionChart
+                                    data={predictionData}
+                                    className="h-[300px] w-full"
+                                    showThreshold={true}
+                                    targetRetention={targetRetention}
+                                />
                             </div>
 
                             {/* GRAPH DECODER */}
@@ -142,20 +169,20 @@ export function EngineSection() {
                                     <div className="text-blue-600/80">Shows your memory usage fading over time without practice.</div>
                                 </div>
                                 <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                    <div className="font-bold text-red-700 mb-1">The Red Line 🚫</div>
-                                    <div className="text-red-600/80">The "Danger Zone" (85%). We must review before hitting this.</div>
+                                    <div className="font-bold text-red-700 mb-1">The Critical Line 🚫</div>
+                                    <div className="text-red-600/80">The Target ({targetRetention}%). We must review before hitting this.</div>
                                 </div>
                                 <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
                                     <div className="font-bold text-emerald-700 mb-1">The Goal 🎯</div>
-                                    <div className="text-emerald-600/80">Find exactly when the curve crosses the red line.</div>
+                                    <div className="text-emerald-600/80">Find exactly when the curve crosses the line.</div>
                                 </div>
                             </div>
 
                             <MathBlock
                                 label="Exponential Decay Model"
                                 formula="R = M · e<sup>-dt</sup>"
-                                realValue={`85% = ${(mastery * 100).toFixed(0)}% · e^(-${decayRate.toFixed(3)} · ${optimalDay})`}
-                                description="Solving for when Retention (R) drops to 85%."
+                                realValue={`${targetRetention}% = ${(mastery * 100).toFixed(0)}% · e^(-${decayRate.toFixed(3)} · ${optimalDay})`}
+                                description={`Solving for when Retention (R) drops to ${targetRetention}%.`}
                                 className="bg-white"
                             />
                         </div>
@@ -197,18 +224,38 @@ export function EngineSection() {
                                             <div className="text-xl font-bold text-white">{(mastery * 100).toFixed(0)}%</div>
                                         </div>
                                         <div>
-                                            <div className="text-xs text-slate-500 mb-1">Estimated Decay</div>
-                                            <div className="text-xl font-bold text-white">{decayRate.toFixed(3)}</div>
+                                            <div className="text-xs text-slate-500 mb-1">Target Retention</div>
+                                            <div className="text-xl font-bold text-white">{targetRetention}%</div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* ADJUSTABLE TARGET SLIDER */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <div className="flex justify-between items-center mb-4">
+                                    <span className="font-bold text-slate-700">Set Target Retention</span>
+                                    <span className="text-sm font-mono bg-slate-100 px-2 py-1 rounded text-slate-600">{targetRetention}%</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="70"
+                                    max="99"
+                                    value={targetRetention}
+                                    onChange={(e) => setTargetRetention(Number(e.target.value))}
+                                    className="w-full accent-violet-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                />
+                                <p className="text-xs text-slate-500 mt-2">
+                                    Dragging this <strong>Higher</strong> (= Strict) means reviewing sooner.<br />
+                                    Dragging this <strong>Lower</strong> (= Relaxed) means reviewing later.
+                                </p>
                             </div>
 
                             {/* EXPLANATION CARD */}
                             <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 text-emerald-900 text-sm leading-relaxed">
                                 <p>
                                     <strong>Why this matters:</strong> Instead of reviewing every day (wasteful) or every month (too late),
-                                    the algorithm solved <strong>t = {optimalDay}</strong> because that is exactly when your memory will hit the critical 85% threshold.
+                                    the algorithm solved <strong>t = {optimalDay}</strong> because that is exactly when your memory will hit the critical {targetRetention}% threshold.
                                 </p>
                             </div>
 
