@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Predictive Learning System: Visualizing the Forgetting Curve 🧠
 
-## Getting Started
+**AI Project - Module E Submission**
+*A Dual-Component Project combining Data Analysis (Python) and Interactive Simulation (Web).*
 
-First, run the development server:
+## 📌 Project Overview
+The **Predictive Learning System** is an AI-driven tool designed to optimize human memory retention using **Spaced Repetition**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+It solves the "Forgetting Curve" problem—the natural decay of memory over time—by predicting the optimal moment to review material. The system uses **Bayesian Knowledge Tracing (BKT)** to estimate mastery and an **Exponential Decay Model** to forecast forgetting.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📂 Project Components
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This repository contains two distinct parts required for the project submission:
 
-## Learn More
+### 1. The Analysis (Jupyter Notebook) 🐍
+*   **File**: `Smart_Review_Scheduler.ipynb`
+*   **Purpose**: This notebook contains the foundational research and model prototyping.
+*   **Key Contents**:
+    *   Implementation of the **BKT Algorithm** (Bayes Theorem update logic).
+    *   Visualization of the Ebbinghaus Forgetting Curve using `matplotlib`/`seaborn`.
+    *   Simulation of student interactions to test the decay formulas.
+    *   Mathematical derivation of the "Optimal Review Time" constraint solver.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. The Application (Interactive Web Simulation) 🌐
+*   **Folder**: `app/` (Next.js Source Code)
+*   **Purpose**: A production-ready web application that translates the notebook's logic into a user-friendly experience.
+*   **Key Features**:
+    *   **The Intelligence Engine**: A real-time dashboard showing the AI thinking process.
+    *   **Interactive Controls**: Sliders to set "Target Retention" (e.g., 90% vs 80%).
+    *   **Dynamic Visuals**: Real-time graphs that change based on user inputs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 How to Run
 
-## Deploy on Vercel
+### Running the Web Application
+1.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+2.  **Start the server**:
+    ```bash
+    npm run dev
+    ```
+3.  **View**: Open [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Running the Notebook
+1.  Ensure you have Python installed.
+2.  Open `Smart_Review_Scheduler.ipynb` in **VS Code** or **Jupyter Lab**.
+3.  Run all cells to see the analysis and static visualizations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠️ Technology Stack
+*   **AI/Logic**: Python (Pandas, Scikit-learn), Bayesian Statistics.
+*   **Frontend**: Next.js 16 (App Router), React, TypeScript.
+*   **Styling**: Tailwind CSS, Shadcn UI.
+*   **Visualization**: Recharts (Web), Matplotlib (Notebook).
